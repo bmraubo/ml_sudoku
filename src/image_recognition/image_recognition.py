@@ -1,8 +1,7 @@
 import cv2
 import imutils
 import numpy
-# from tensorflow import keras
-# from keras.models import load_model
+
 
 def get_sudoku_board_from_image(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -41,18 +40,28 @@ def adjust_for_perspective(img, contours):
     result = get_perspective(img, location)
     return result, location
 
+def identify_number_blocks(image, board):
+    rows = numpy.vsplit(board,9)
+    blocks = []
+    for row in rows:
+        boxes = numpy.hsplit(row,9)
+        for box in boxes:
+            block = cv2.resize(box, (300, 300))/255.0
+            cv2.imshow("Number block", block)
+            cv2.waitKey(500)
+            blocks.append(box)
+    return blocks
 
 if __name__ == "__main__":
-    img = cv2.imread('src/image_recognition/test')
-
-    # img = cv2.imread('src/image_recognition/easypuzzle.png')
-    # img = cv2.imread('src/image_recognition/sudoku-angle.png')
+    # img = cv2.imread('src/image_recognition/test')
+    img = cv2.imread('src/image_recognition/sudoku1.jpg')
     # img = cv2.imread('src/image_recognition/photo.jpg')
     cv2.imshow("Input Image", img)
     contours = get_sudoku_board_from_image(img)
     result, location = adjust_for_perspective(img, contours)
     print(result, location)
     cv2.imshow("Board", result)
+    boxes = identify_number_blocks(img, result)
     cv2.waitKey() ### only for dev purposes
 
 
