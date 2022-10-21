@@ -2,8 +2,6 @@ from src.image_recognition.board_reader import BoardReader
 
 
 def test_board_reader_extract_blocks():
-    import sys
-    print(sys.path)
     test_file = "test/image_recognition/photo_test.jpeg"
 
     board_reader = BoardReader(test_file)
