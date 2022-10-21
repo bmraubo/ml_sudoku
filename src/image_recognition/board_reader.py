@@ -10,6 +10,8 @@ class BoardReader:
         "sigma_space": 20,
     }
 
+    number_block_image_size = (300, 300)
+
     def __init__(self, image_file_location: str) -> None:
         self.image_file_location = image_file_location
 
@@ -18,6 +20,8 @@ class BoardReader:
         edges, kernel = self.prepare_image()
         self.contours = self.identify_contours(edges, kernel)
         self.board, self.location = self.adjust_for_perspective()
+        self.number_blocks = self.identify_number_blocks()
+        return self.number_blocks
 
     def prepare_image(self):
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
@@ -64,3 +68,13 @@ class BoardReader:
             return result, location
         except:
             raise Exception("board not found")
+
+    def identify_number_blocks(self):
+        rows = numpy.vsplit(self.board, 9)
+        blocks = []
+        for row in rows:
+            boxes = numpy.hsplit(row, 9)
+            for box in boxes:
+                block = cv2.resize(box, self.number_block_image_size) / 255.0
+                blocks.append(block)
+        return blocks
